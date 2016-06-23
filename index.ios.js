@@ -9,23 +9,46 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  Image,
 } from 'react-native';
 
+var MOCKED_MOVIES_DATA = [
+  {title: '标题', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'}},
+];
+
 class AwesomeProject extends Component {
+
+// 展现了一个图片
+imageView(){
+
+  return (
+    <Image
+    style={[{height: 360, width: 200, backgroundColor: 'red'}]}
+    source={{uri: 'file:///Users/zhangdong/Desktop/苏州行/留园/IMG_1354.jpg'}} />
+  )
+}
+
+// 展现了一个电影 如果有多个控件需要给定一个父视图 如这里的<View></View>标签
+// ???? 是什么让这些控件换行的
+movieView(){
+  var movie = MOCKED_MOVIES_DATA[0];
+  return(
+    <View>
+    <Text>{movie.title}</Text>
+    <Text>{movie.year}</Text>
+    <Image
+    style={[{height:53, width:81, backgroundColor:'yellow'}]}
+    source={{uri:movie.posters.thumbnail}}
+    />
+    </View>
+  )
+}
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+      {this.movieView()}
       </View>
     );
   }
@@ -34,9 +57,8 @@ class AwesomeProject extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    justifyContent: 'center',
   },
   welcome: {
     fontSize: 20,
