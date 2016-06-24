@@ -18,6 +18,10 @@ var MOCKED_MOVIES_DATA = [
   {title: '标题', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'}},
 ];
 
+/*
+
+*/
+
 class AwesomeProject extends Component {
 
 // 展现了一个图片
@@ -65,7 +69,14 @@ movieViewRow(){
     )
 }
 
-// render 可以对比理解为ViewDidLoad
+/*
+如果整个项目完全采用React，那么界面上就只有一个组件根节点；如果局部使用React，那么每个局部使用的部分都有一个根节点。在render时，
+根节点由React.render函数去触发，而所有子节点都是铜鼓父节点的render方法去构造的。
+
+每个组件都会有一个render方法，这个方法，返回组件的实例，最终整个界面得到一个虚拟DOM树，再由React以高效的方式展现在界面上。
+
+
+*/
   render() {
 
     // return内不能写注释
@@ -76,6 +87,14 @@ movieViewRow(){
     );
   }
 }
+
+/*
+JSX中使用样式和真实的样式也很类似，通过 style属性 来定义，但和真实DOM不同的是，属性值不能是字符串而必须是对象
+
+<div style={{color: '#ff0000', fontSize: '14px'}}>Hello World.</div>
+
+里面的大括号是js对象表达式，外面的大括号是JSX的语法。
+*/
 
 const styles = StyleSheet.create({
   container: {
