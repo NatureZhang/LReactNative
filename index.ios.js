@@ -11,6 +11,7 @@ import {
   Text,
   View,
   Image,
+  ListView,
 } from 'react-native';
 
 // 这个在class外层就行，在class内就不行，为什么？？？
@@ -18,10 +19,7 @@ var MOCKED_MOVIES_DATA = [
   {title: '标题', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'}},
 ];
 
-/*
-
-*/
-
+var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 class AwesomeProject extends Component {
 
 // 展现了一个图片
@@ -54,7 +52,10 @@ movieView(){
 movieViewRow(){
     var movie = MOCKED_MOVIES_DATA[0];
     return(
-      <View>
+      <View style={styles.container}>
+      {
+        /* 最外层需要一个 */
+      }
       <Image
       style={styles.thumbnail}
       source={{uri:movie.posters.thumbnail}}
@@ -77,15 +78,81 @@ movieViewRow(){
 
 
 */
-  render() {
 
-    // return内不能写注释
-    return (
-      <View style={styles.container}>
-      {this.movieViewRow()}
+constructor(props) {
+  super(props);
+  this.state = {
+    dataSource: new ListView.DataSource({
+      rowHasChanged:(row1, row2) => row1 !== row2,
+    }),
+    loaded:false,
+  };
+// 在ES6中，如果在自定义的函数里使用了this关键字，则需要对其进行‘绑定’操作，否则this指向不对
+  this.fetchData = this.fetchData.bind(this)
+}
+
+/*
+ 它在组件加载完成的时候调用一次，以后不会再被调用
+*/
+componentDidMount(){
+  this.fetchData();
+}
+
+fetchData(){
+  fetch(REQUEST_URL)
+  .then((response) => response.json())
+  .then((responseData) => {
+    // setState 实际上会触发一次重新渲染的流程，此时render函数被触发
+    this.setState({
+      dataSource:this.state.dataSource.cloneWithRows(responseData.movies),
+      loaded:true,
+    });
+  })
+  .done();
+}
+
+  render() {
+    // return this.movieViewRow();
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return(
+      <ListView
+      dataSource = {this.state.dataSource}
+      renderRow = {this.renderMovie}
+      style = {styles.listView}
+      />
+    );
+  }
+
+  renderLoadingView(){
+    return(
+      <View style = {styles.container}>
+        <Text>
+        正在加载电影数据......
+        </Text>
       </View>
     );
   }
+
+  renderMovie(movie) {
+    return(
+      <View style = {styles.container}>
+        <Image
+          source = {{uri:movie.posters.thumbnail}}
+          style = {styles.thumbnail}
+        />
+        <View style = {styles.rightContainer}>
+          <Text style = {styles.title}>{movie.title}</Text>
+          <Text style = {styles.year}>{movie.year}</Text>
+        </View>
+      </View>
+    );
+  }
+
+
+
 }
 
 /*
@@ -105,7 +172,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
   },
   rightContainer:{
-    // flex:1,
+    flex:1,
     backgroundColor:'red',
   },
   welcome: {
@@ -130,6 +197,10 @@ const styles = StyleSheet.create({
   },
   year:{
     textAlign:'center',
+  },
+  listView:{
+    paddingTop:20,
+    backgroundColor:'yellow'
   },
 });
 
